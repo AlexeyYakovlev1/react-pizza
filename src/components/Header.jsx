@@ -1,6 +1,6 @@
 import React from 'react';
-import '../../scss/app.scss';
-import logo from '../../assets/img/pizza-logo.svg';
+import '../scss/app.scss';
+import logo from '../assets/img/pizza-logo.svg';
 
 function Header() {
     return (
