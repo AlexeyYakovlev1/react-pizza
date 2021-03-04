@@ -1,18 +1,35 @@
 import React from 'react';
 
-// https://www.youtube.com/watch?v=IMBAK-DftVM&list=PL0FGkDGJQjJFMRmP7wZ771m1Nx-m2_qXq&index=4 26:55
-
-function SortPopup() {
-    const popularRef = React.useRef();
+function SortPopup({items}) {
+    const [popular, setPopular] = React.useState(false);
+    const [active, setActive] = React.useState(0);
+    const sortRef = React.useRef();
+    const arrowRef = React.useRef();
+    const activeLabel = items[active];
 
     function openMenu() {
-        popularRef.current.classList.toggle('block-hidden');
+      !popular ? setPopular(true) : setPopular(false);
     }
 
+    function clickItem(index) {
+      setActive(index);
+      setPopular(false)
+    }
+
+    React.useEffect(() => {
+      document.body.addEventListener('click', (event) => {
+        if (!event.path.includes(sortRef.current)) {
+          setPopular(false);
+        }
+      })
+    }, []);
+
     return (
-        <div className="sort">
+        <div className="sort" ref={sortRef}>
             <div className="sort__label">
                 <svg
+                  ref={arrowRef}
+                  style={{transform: !popular ? "rotate(180deg)" : "rotate(360deg)"}}
                   width="10"
                   height="6"
                   viewBox="0 0 10 6"
@@ -25,15 +42,23 @@ function SortPopup() {
                   />
                 </svg>
                 <b>Сортировка по:</b>
-                <span onClick={() => openMenu()}>популярности</span>
+                <span onClick={() => openMenu()}>{activeLabel}</span>
               </div>
-              <div className="sort__popup block-hidden" ref={popularRef}>
+              {popular && <div className="sort__popup">
                 <ul>
-                  <li className="active ">популярности</li>
-                  <li>цене</li>
-                  <li>алфавиту</li>
+                  {items.map((item, index) => {
+                    return (
+                      <li 
+                        key={index}
+                        onClick={() => clickItem(index)}
+                        className={active === index ? "active" : ""}
+                      >
+                        {item}
+                      </li>
+                    )
+                  })}
                 </ul>
-              </div>
+              </div>}
         </div>
     )
 }
